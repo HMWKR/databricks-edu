@@ -1,0 +1,50 @@
+resources:
+  jobs:
+    databricks_edu:
+      name: databricks_edu
+      tasks:
+        - task_key: bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/Bronze - 환율 API 수집.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: silver
+          depends_on:
+            - task_key: bronze
+          disabled: false
+          email_notifications: {}
+          environment_key: Default
+          notebook_task:
+            notebook_path: ../src/Silver - 환율 정제.py
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: gold
+          depends_on:
+            - task_key: silver
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/Gold - 환율 요약.py
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+      email_notifications:
+        no_alert_for_skipped_runs: false
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "6"
+      max_concurrent_runs: 1
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      run_as:
+        service_principal_name: 91ce7ec1-6278-4597-97b6-71e584207a81
+      timeout_seconds: 0
+      webhook_notifications: {}

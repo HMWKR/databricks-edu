@@ -4,6 +4,9 @@ bundle:
   name: databricks_free_demo
   uuid: a46bc6c4-f616-4d10-a8e7-a19696350310
 
+# run_as:
+#   service_principal_name: '5cf3z04b-a73c-4x46-9f3d-52da7999069e' 
+# 실행하는 sp의 id를 사용하여 직접적으로 run을 할 sp 계정을 지정 할 수 있음. 
 include:
   - resources/*.yml
 
@@ -29,18 +32,22 @@ targets:
     default: true
     workspace:
       host: https://dbc-8d1b8955-b21c.cloud.databricks.com
+      profile: DEFAULT
     variables:
       catalog: workspace
       schema: ${workspace.current_user.short_name}
   prod:
     mode: production
-    workspace:
-      host: https://dbc-8d1b8955-b21c.cloud.databricks.com
+    workspace:  
+      host: https://dbc-f20c16c0-9020.cloud.databricks.com
+      profile: PROD_SP
       # We explicitly deploy to /Workspace/Users/dltysl123@gmail.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/dltysl123@gmail.com/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
     variables:
       catalog: workspace
-      schema: prod
+      schema: default
     permissions:
-      - user_name: dltysl123@gmail.com
+      #- user_name: dltysl123@gmail.com ## 외부 prod 워크스페이스에 생성되는 번들 리소스를  이사용자도 관리 할 수 있게 한다라는 뜻 즉, SP 자체에 배포를 할 수 잇게끔 하는게 아니라 관리만 가능하게끔 하는 것 
+      #  level: CAN_MANAGE
+      - service_principal_name: 4ff26f51-cc41-475d-a2c6-8fe661212acb
         level: CAN_MANAGE
