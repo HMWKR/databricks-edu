@@ -44,7 +44,5 @@ resources:
       performance_target: PERFORMANCE_OPTIMIZED
       queue:
         enabled: true
-      run_as:
-        service_principal_name: 91ce7ec1-6278-4597-97b6-71e584207a81
       timeout_seconds: 0
       webhook_notifications: {}
